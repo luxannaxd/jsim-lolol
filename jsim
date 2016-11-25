@@ -1,0 +1,390 @@
+.include "nominal.jsim"
+.include "8clocks.jsim"
+.include "stdcell.jsim"
+.include "32bit full adder.jsim"
+.include "boolean-circuit.jsim"
+.include "counter.jsim"
+.include "shifter.jsim"
+.include "comparator.jsim"
+.include "ALU.jsim"
+
+
+//INSTRUCTION MEMORY
+
+Xinmemz
++ vdd 0 0
++ counting[1:0]
++ out[31:0]
+
++ $memory width=32 nlocations=4
++ contents =(
++ 0b011000 00000 11111 00000 00000000000
++ 0b011000 00001 11111 00000 00000000000
++ 0b011001 00000 11111 00000 00000000000
++ 0b011001 00001 11111 00000 00000000000)
+
+//CLU
+
+Xcumem
++ vdd 0 0 
++ opcode[5:0] z 
++ pcsel[1:0] ra2sel bsel wdsel[1:0] alufn[5:0] wr werf
+
++ $memory width=14 nlocations=128
++ contents =(
++ 0 0 0 0 0 0 0 0 0
++ 0 0 0 0 0 0 0 0 0
++ 0 0 0 0 0 0 0 0 0
++ 0 0 0 0 0 0 0 0 0
++ 0 0 0 0 0 0 0 0 0
++ 0 0 0 0 0 0 0 0 0
++ 0b00011000000001 //LD Z=0
++ 0b00011000000001 //LD Z=1
++ 0b00110000000010 //ST Z=0
++ 0b00110000000010 //ST Z=1
+
++ 0b00000000000000 //N/A Z=0
++ 0b00000000000000 //N/A Z=1
+
++ 0b10000000000001 //JMP Z=0
++ 0b10000000000001 //JMP Z=1
+
++ 0b00000000000001 //BEQ Z=0
++ 0b01000000000001 //BEQ Z=1
+
++ 0b01000000000001 //BNE Z=0
++ 0b00000000000001 //BNE Z=1
+
++ 0b00110100000111 //LDR Z=0
++ 0b00110100000111 //LDR Z=1
+
++ 0b00000100000001 //ADD Z=0
++ 0b00000100000001 //ADD Z=1
+
++ 0b00000100000101 //SUB Z=0
++ 0b00000100000101 //SUB Z=1
+
++ 0b00000000000000 //MUL Z=0
++ 0b00000000000000 //MUL Z=1
+
++ 0b00000000000000 //DIV Z=0
++ 0b00000000000000 //DIV Z=1
+
++ 0b00000111001101 //CMPEQ Z=0
++ 0b00000111001101 //CMPEQ Z=1
+
++ 0b00000111010101 //CMPLT Z=0
++ 0b00000111010101 //CMPLT Z=1
+
++ 0b00000111011101 //CMPLE Z=0
++ 0b00000111011101 //CMPLE Z=1
+
++ 0b00000000000000 //BLANK Z=0
++ 0b00000000000000 //BLANK Z=1
+
++ 0b00000101100001 //AND Z=0
++ 0b00000101100001 //AND Z=1
+
++ 0b00000101111001 //OR Z=0
++ 0b00000101111001 //OR Z=1
+
++ 0b00000101011001 //XOR Z=0
++ 0b00000101011001 //XOR Z=1
+
++ 0b00000000000000 //BLANK Z=0
++ 0b00000000000000 //BLANK Z=1
+
++ 0b00000110000001 //SHL Z=0
++ 0b00000110000001 //SHL Z=1
+
++ 0b00000110000101 //SHR Z=0
++ 0b00000110000101 //SHR Z=1
+
++ 0b00000110001101 //SRA Z=0
++ 0b00000110001101 //SRA Z=1
+
++ 0b00000000000000 //BLANK Z=0
++ 0b00000000000000 //BLANK Z=1
+
++ 0b00010100000001 //ADDC Z=0
++ 0b00010100000001 //ADDC Z=1
+
++ 0b00010100000101 //SUBC Z=0
++ 0b00010100000101 //SUBC Z=1
+
++ 0b00000000000000 //MULC Z=0
++ 0b00000000000000 //MULC Z=1
+
++ 0b00000000000000 //DIVC Z=0
++ 0b00000000000000 //DIVC Z=1
+
++ 0b00010111001101 //CMPEQC Z=0
++ 0b00010111001101 //CMPEQC Z=1
+
++ 0b00010111010101 //CMPLTC Z=0
++ 0b00010111010101 //CMPLTC Z=1
+
++ 0b00010111011101 //CMPLEC Z=0
++ 0b00010111011101 //CMPLEC Z=1
+
++ 0b00010101100001 //ANDC Z=0
++ 0b00010101100001 //ANDC Z=1
+
++ 0b00010101111001 //ORC Z=0
++ 0b00010101111001 //ORC Z=1
+
++ 0b00010101011001 //XORC Z=0
++ 0b00010101011001 //XORC Z=1
+
++ 0b00010110000001 //SHLC Z=0
++ 0b00010110000001 //SHLC Z=1
+
++ 0b00010110000101 //SHRC Z=0
++ 0b00010110000101 //SHRC Z=1
+
++ 0b00010110001101 //SRAC Z=0
++ 0b00010110001101 //SRAC Z=1
+
++ 0b00000000000000 //BLANK Z=0 
++ 0b00000000000000)//BLANK Z=1
+
+//Xlol rd1[31:0] z nor2 
+//NOT SURE Z
+
+
+//REGISTER
+
+
+Xregistermem
++ vdd 0 0
++ ra[4:0] 
++ rd1[31:0]
+
++ vdd 0 0
++ ra2[4:0]
++ rd2[31:0]
+
++ 0 clk1 werf
++ rc[4:0]
++ wdselout[31:0]
+
++ $memory width=32 nlocations=32
++ contents=(
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0
++ 0 0 0 0)
+
+
+//ALU
+
+
+.subckt aluakb bsel wdsel[1:0] alufn[5:0] pcselout[31:0] rd[31:0] rd11[31:0] rd22[31:0] c[15:0] aluout[31:0] wdselout[31:0]
+Xmuxone bsel#32 rd22[31:0] c[15:0] 0#16 bselout[31:0] mux2
+Xalu rd11[31:0] bselout[31:0] alufn[5:0] aluout[31:0] alu
+Xmuxtwo wdsel[0]#32 wdsel[1]#32 pcselout[31:0] aluout[31:0] rd[31:0] 0#32 wdselout[31:0] mux4
+.ends
+
+
+//DATA MEMORY
+Xdatamem
++ vdd 0 0
++ aluout[6:0] 
++ rd0[31:0]
+
++ 0 clk1 wr
++ aluout[6:0] 
++ rd2[31:0]
+
++ $memory width=32 nlocations=128
++ contents =(
++ 0b000000 00000 00000 00000 00000000000
++ 0b000000 00000 00000 00000 00000000000
++ 0b000000 00000 00000 00000 00000000000
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
++ 0
+
++ 0
++ 0
++ 0)
+
+
+//TESTING
+
+
+Wadd add nrz(0, 5, 4.9ns, 5ns, 0.1ns, 0.1ns)0x1
+Xinmux pcsel[0]#32 pcsel[1]#32 counting[31:0] 0#32 rd1[31:0] 0#32 pcselout[31:0] mux4
+Xcountpls pcselout[31:0] add#32 counting[31:0] 32counter  
+
+Xregmux ra2sel out[15:11] out[25:21] ra2[4:0] mux2
+
+Xcontrol out[31:26] rd1[31:0] 0 pcsel[1:0] ra2sel bsel wdsel[1:0] alufn[5:0] wr werf CLU
+Xarithmetic bsel wdsel[1:0] alufn[5:0] pcselout[31:0] rd[31:0] rd1[31:0] rd2[31:0] out[15:0] aluout[31:0] wdselout[31:0] aluakb
+
+.tran 800ns
+
+//inmem
+.plot counting[31:0]
+.plot out[31:0]
+.plot rd1[31:0]
+.plot pcselout[31:0]
+
+//clu
+.plot out[31:26]
+.plot clk1
+.plot pcsel[1:0] 
+.plot ra2sel 
+.plot bsel
+.plot wdsel[1:0] 
+.plot alufn[5:0] 
+.plot wr
+.plot werf
+
+//register
+.plot out[25:21]
+.plot out[20:16]
+.plot out[15:11]
+.plot wdselout[31:0]
+.plot rd1[31:0]
+.plot rd2[31:0]
+
+//data and alu
+.plot aluout[31:0]
+.plot rd[31:0]
