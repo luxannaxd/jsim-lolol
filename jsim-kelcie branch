@@ -27,7 +27,7 @@ Xinmemz
 
 Xcumem
 + vdd 0 0 
-+ opcode[5:0] z 
++ out[31:26] z 
 + pcsel[1:0] ra2sel bsel wdsel[1:0] alufn[5:0] wr werf
 
 + $memory width=14 nlocations=128
